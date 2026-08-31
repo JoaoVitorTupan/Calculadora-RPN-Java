@@ -4,21 +4,31 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String[] expressoes = {
-                "3 + 5 * 2",
-                "(10 + 5) * 2",
-                "10.5 + 2.5",
-                "(5.5 + 2.5) * 3",
-                "10 + (5 * 2.5) - 4"
-        };
+        testar("10 / 2");
+        testar("10 / 3");
+        testar("10 / 0");
+        testar("(10 + 5");
+        testar("10 + 5)");
+    }
 
-        for (String expressao : expressoes) {
+    private static void testar(String expressao) {
+
+        try {
 
             List<String> rpn = ConversorRPN.converter(expressao);
 
+            double resultado = AvaliadorRPN.avaliar(rpn);
+
             System.out.println("Expressão: " + expressao);
             System.out.println("RPN: " + String.join(" ", rpn));
-            System.out.println();
+            System.out.println("Resultado: " + resultado);
+
+        } catch (Exception e) {
+
+            System.out.println("Expressão: " + expressao);
+            System.out.println("Erro: " + e.getMessage());
         }
+
+        System.out.println();
     }
 }
