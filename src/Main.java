@@ -1,34 +1,59 @@
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        testar("10 / 2");
-        testar("10 / 3");
-        testar("10 / 0");
-        testar("(10 + 5");
-        testar("10 + 5)");
-    }
+        Scanner scanner = new Scanner(System.in);
 
-    private static void testar(String expressao) {
+        System.out.println("========================================");
+        System.out.println("       CALCULADORA INFIXA PARA RPN");
+        System.out.println("========================================");
+        System.out.println("Digite uma expressão matemática.");
+        System.out.println("Digite 'sair' para encerrar.");
+        System.out.println();
 
-        try {
+        while (true) {
 
-            List<String> rpn = ConversorRPN.converter(expressao);
+            System.out.print("Digite uma expressão: ");
+            String expressao = scanner.nextLine();
 
-            double resultado = AvaliadorRPN.avaliar(rpn);
+            if (expressao.equalsIgnoreCase("sair")) {
+                break;
+            }
 
-            System.out.println("Expressão: " + expressao);
-            System.out.println("RPN: " + String.join(" ", rpn));
-            System.out.println("Resultado: " + resultado);
+            if (expressao.trim().isEmpty()) {
+                System.out.println("Erro: a expressão não pode estar vazia.");
+                System.out.println();
+                continue;
+            }
 
-        } catch (Exception e) {
+            try {
 
-            System.out.println("Expressão: " + expressao);
-            System.out.println("Erro: " + e.getMessage());
+                List<String> rpn = ConversorRPN.converter(expressao);
+
+                double resultado = AvaliadorRPN.avaliar(rpn);
+
+                System.out.println();
+                System.out.println("Expressão original: " + expressao);
+                System.out.println(
+                        "Expressão RPN:      " + String.join(" ", rpn)
+                );
+                System.out.println("Resultado:          " + resultado);
+                System.out.println();
+
+            } catch (Exception e) {
+
+                System.out.println();
+                System.out.println("Erro: " + e.getMessage());
+                System.out.println();
+            }
         }
 
+        scanner.close();
+
         System.out.println();
+        System.out.println("Programa encerrado.");
     }
 }

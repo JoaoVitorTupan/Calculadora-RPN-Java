@@ -23,6 +23,8 @@ public class ConversorRPN {
 
         int i = 0;
 
+        boolean esperaOperando = true;
+
         while (i < expressao.length()) {
 
             char caractere = expressao.charAt(i);
@@ -34,32 +36,73 @@ public class ConversorRPN {
 
             if (Character.isDigit(caractere) || caractere == '.') {
 
+                if (!esperaOperando) {
+                    throw new IllegalArgumentException(
+                            "Operadores ausentes entre os valores."
+                    );
+                }
+
                 StringBuilder numero = new StringBuilder();
+                boolean possuiPontoDecimal = false;
 
                 while (i < expressao.length()) {
 
                     char atual = expressao.charAt(i);
 
-                    if (Character.isDigit(atual) || atual == '.') {
+                    if (Character.isDigit(atual)) {
+
                         numero.append(atual);
                         i++;
+
+                    } else if (atual == '.') {
+
+                        if (possuiPontoDecimal) {
+                            throw new IllegalArgumentException(
+                                    "Número decimal inválido."
+                            );
+                        }
+
+                        possuiPontoDecimal = true;
+                        numero.append(atual);
+                        i++;
+
                     } else {
                         break;
                     }
                 }
 
+                if (numero.toString().equals(".")) {
+                    throw new IllegalArgumentException(
+                            "Número decimal inválido."
+                    );
+                }
+
                 saida.add(numero.toString());
+                esperaOperando = false;
                 continue;
             }
 
             if (caractere == '(') {
 
+                if (!esperaOperando) {
+                    throw new IllegalArgumentException(
+                            "Operador ausente antes do parêntese."
+                    );
+                }
+
                 operadores.empilhar("(");
                 i++;
+                esperaOperando = true;
                 continue;
             }
 
             if (caractere == ')') {
+
+                if (esperaOperando) {
+                    throw new IllegalArgumentException(
+                            "Parêntese fechado em posição inválida."
+                    );
+                }
 
                 while (!operadores.estaVazia()
                         && !operadores.topo().equals("(")) {
@@ -76,11 +119,18 @@ public class ConversorRPN {
                 operadores.desempilhar();
 
                 i++;
+                esperaOperando = false;
                 continue;
             }
 
             if (caractere == '+' || caractere == '-'
                     || caractere == '*' || caractere == '/') {
+
+                if (esperaOperando) {
+                    throw new IllegalArgumentException(
+                            "Operador em posição inválida."
+                    );
+                }
 
                 String operadorAtual = String.valueOf(caractere);
 
@@ -95,11 +145,18 @@ public class ConversorRPN {
                 operadores.empilhar(operadorAtual);
 
                 i++;
+                esperaOperando = true;
                 continue;
             }
 
             throw new IllegalArgumentException(
                     "Caractere inválido: " + caractere
+            );
+        }
+
+        if (esperaOperando) {
+            throw new IllegalArgumentException(
+                    "Expressão incompleta."
             );
         }
 
